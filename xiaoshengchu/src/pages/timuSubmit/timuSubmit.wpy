@@ -1,0 +1,274 @@
+<style lang="less">
+.submitarea {
+  text-align: center;
+}
+.weui-textarea {
+  height: 120px;
+}
+.tiku-option {
+  height: 2.58823529em;
+  min-height: 2.58823529em;
+  line-height: 2.58823529em;
+}
+</style>
+<template>
+  <view class="page">
+    <view class="page__bd">
+      <view class="weui-panel weui-panel_access">
+        <view class="weui-panel__hd">提问部分：</view>
+        <view class="weui-panel__bd">
+          <view class="weui-cell weui-cell_input">
+            <view class="weui-cell__hd">
+              <view class="weui-label">题型：</view>
+            </view>
+            <view class="weui-cell__bd">
+              <picker @change="chooseType" value="{{timuTypes[type].field}}" range="{{timuTypes}}" range-key='value'>
+                <view class="weui-select">
+                  {{timuTypes[type].value}}
+                </view>
+              </picker>
+            </view>
+          </view>
+          <view class="weui-cell weui-cell_input">
+            <view class="weui-cell__hd">
+              <view class="weui-label">是否可变换：</view>
+            </view>
+            <view class="weui-cell__bd">
+              <switch @change="setTransform" checked="{{transform}}" class="tiku-option" />
+            </view>
+          </view>
+
+          <view class="weui-cell weui-cell_input">
+            <view class="weui-cell__hd">
+              <view class="weui-label">题目：</view>
+            </view>
+            <view class="weui-cell__bd">
+              <textarea class="weui-textarea" value="{{content}}" @input="setContent" placeholder="1+1=" />
+              <view class="weui-textarea-counter">{{textInputNow}}/{{textInputMax}}</view>
+            </view>
+          </view>
+          <view wx:if="{{transform===true}}">
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">变换规则：</view>
+              </view>
+              <view class="weui-cell__bd">
+                <view wx:for="{{transformRules}}" wx:key="value">
+                  <label>{{item}}</label><input data-id="{{item}}" @input="setRule" value="{{transformRule[item]}}" />
+                </view>
+              </view>
+            </view>
+          </view>
+          <view wx:if="{{timuTypes[type].field==='xuanze'}}">
+            <view class="weui-cells__title">选项：</view>
+            <view class="weui-cells weui-cells_after-title">
+              <view class="weui-cell weui-cell_input" wx:for="{{xuanzeItems}}" wx:key="value">
+                <view class="weui-cell__bd">
+                  <input class="weui-input" data-id="{{xuanzeItems[index]}}" value="{{options[xuanzeItems[index]]}}" @input="setOption" placeholder="请填写选项{{xuanzeItems[index]}}" />
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="weui-panel weui-panel_access">
+        <view class="weui-panel__hd">答案区域：</view>
+        <view class="weui-pabel__bd">
+          <view wx:if="{{timuTypes[type].field==='xuanze'}}">
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <input value="{{answer}}" @input="setAnswer" placeholder='A/B/C/D' />
+              </view>
+            </view>
+          </view>
+          <view wx:if="{{timuTypes[type].field==='tiankong'||timuTypes[type].field==='yingyong'}}">
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <input value="{{answer}}" @input="setAnswer" placeholder='2' />
+              </view>
+            </view>
+          </view>
+          <view wx:if="{{timuTypes[type].field==='panduan'}}">
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__bd">
+                <radio-group @change="panduanChange">
+                  <label class="weui-cell weui-check__label" wx:for="{{panduanItems}}" wx:key="value">
+                    <radio class="weui-check" value="{{item.value}}" checked="{{item.checked}}" />
+                    <view class="weui-cell__bd">{{item.name}}</view>
+                    <view class="weui-cell__ft weui-cell__ft_in-radio" wx:if="{{item.checked}}">
+                      <icon class="weui-icon-radio" type="success_no_circle" size="16"></icon>
+                    </view>
+                  </label>
+                </radio-group>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="submitarea">
+        <button type="primary" class="weui-btn btn-mini" size="mini" @tap="timuSubmit">提交</button>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class timuSubmit extends wepy.page {
+  config = {
+    navigationBarTitleText: '提交题目'
+  }
+  // 根据content生成
+  computed = {
+    transformRules() {
+      if (this.transform) {
+        // 解析content [a-z]
+        let ruleList = this.content.match(/[a-z]/g)
+        return ruleList
+      }
+    }
+  }
+  // 题型
+  data = {
+    content: '', // 题目的内容
+    answer: '', // 题目的答案
+    type: 0, // 题目类型
+    transform: false, // 是否可变换
+    transformRule: {}, // 变换规则
+    options: {}, // 选择题
+    textInputNow: 0,
+    textInputMax: 1000,
+    panduanItems: [
+      {
+        name: '对',
+        value: 'Y'
+      },
+      {
+        name: '错',
+        value: 'N'
+      }
+    ],
+    xuanzeItems: ['A', 'B', 'C', 'D'],
+    timuTypes: [
+      {
+        field: 'tiankong',
+        value: '填空题'
+      },
+      {
+        field: 'xuanze',
+        value: '选择题'
+      },
+      {
+        field: 'panduan',
+        value: '判断题'
+      },
+      {
+        field: 'yingyong',
+        value: '应用题'
+      }
+    ]
+  }
+  methods = {
+    setContent(evt) {
+      this.content = evt.detail.value
+      this.textInputNow = this.content.length
+    },
+    setAnswer(evt) {
+      this.answer = evt.detail.value
+    },
+    setTransform(evt) {
+      this.transform = evt.detail.value
+      // 根据content动态生成需要设置规则的
+    },
+    setRule(evt) {
+      let ruleIndex = evt.currentTarget.dataset.id
+      let ruleContent = evt.detail.value
+      this.transformRule[ruleIndex] = ruleContent
+    },
+    setOption(evt) {
+      let ruleIndex = evt.currentTarget.dataset.id
+      let ruleContent = evt.detail.value
+      this.options[ruleIndex] = ruleContent
+    },
+    xuanzeChange(evt) {
+      let chooseVal = evt.detail.value
+      for (let i = 0; i < this.xuanzeItems.length; i++) {
+        if (this.xuanzeItems[i].value === chooseVal) {
+          this.xuanzeItems[i].checked = true
+          this.answer = this.xuanzeItems[i].value
+        } else {
+          this.xuanzeItems[i].checked = false
+        }
+      }
+    },
+    panduanChange(evt) {
+      let chooseVal = evt.detail.value
+      for (let i = 0; i < this.panduanItems.length; i++) {
+        if (this.panduanItems[i].value === chooseVal) {
+          this.panduanItems[i].checked = true
+          this.answer = this.panduanItems[i].value
+        } else {
+          this.panduanItems[i].checked = false
+        }
+      }
+    },
+    chooseType(evt) {
+      let ty = evt.detail.value
+      this.type = ty
+      // 某些情况下内容要重置
+    },
+    timuSubmit() {
+      // 调用云函数存储
+      const db = wx.cloud.database()
+      const timuCollection = db.collection('timu')
+      // 数据一致性校验
+      if (this.content === '' || this.answer === '') {
+        return void wx.showToast({
+          title: '请填写题目内容和答案',
+          icon: 'none'
+        })
+      }
+      //  可变换题型，答案必须具备对应的值
+      if (this.transform) {
+        if (!this.answer.match(/[a-z]/g)) {
+          return void wx.showToast({
+            title: '可变题型答案非具体值',
+            icon: 'none'
+          })
+        }
+      }
+      let submitData = {
+        content: this.content,
+        answer: this.answer,
+        type: this.type,
+        level: 1,
+        status: 'checked',
+        provider: {
+          owner: ''
+        },
+        transform: this.transform,
+        transform_rules: this.transformRule,
+        category: {
+          big: '',
+          small: ''
+        },
+        submittime: Date.now(),
+        tags: []
+      }
+      console.log(submitData)
+      return void timuCollection.add({
+        data: submitData,
+        success(res) {
+          wx.showToast({
+            title: '提交成功'
+          })
+        }
+      })
+    }
+  }
+  onLoad() {
+    console.log('onLoad')
+  }
+}
+</script>
