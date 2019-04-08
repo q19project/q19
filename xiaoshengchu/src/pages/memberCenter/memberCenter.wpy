@@ -1,0 +1,40 @@
+<template>
+  <view class="page">
+    <view class="page__bd">
+      <view class="weui-panel weui-panel_access">
+        <view class="weui-panel__hd">导航：</view>
+        <view class="weui-panel__bd">
+          <view class="weui-cell weui-cell_input">
+            <view class="weui-cell__hd">
+              <navigator url='/pages/timuSubmit/timuSubmit'>历史成绩</navigator>
+            </view>
+          </view>
+          <view class="weui-cell weui-cell_input">
+            <view class="weui-cell__hd">
+              <navigator url='/pages/timuSubmit/timuSubmit'>提交题目</navigator>
+            </view>
+          </view>
+          <view class="weui-cell weui-cell_input">
+            <view class="weui-cell__hd">
+              <navigator url='/pages/timuSubmit/ceyanMaker'>制作测验卷</navigator>
+            </view>
+          </view>
+          <view class="weui-cell weui-cell_input">
+            <view class="weui-cell__hd">
+              <navigator url='/pages/ceyanList/ceyanList'>测验卷列表</navigator>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+
+export default class memberCenter extends wepy.page {
+  config = {
+    navigationBarTitleText: '个人中心'
+  }
+}
+</script>
