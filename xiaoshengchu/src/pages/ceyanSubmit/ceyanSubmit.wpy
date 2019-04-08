@@ -111,6 +111,7 @@ export default class ceyanSubmit extends wepy.page {
     ceyanCurrent: 0,
     ceyanTotal: 0,
     ceyanName: '',
+    ceyanId: 0,
     answerFocus: true,
     timuList: [],
     timuContent: [],
@@ -136,14 +137,34 @@ export default class ceyanSubmit extends wepy.page {
       console.log(evt.detail.value, evt.detail.cursor, evt.detail.keyCode)
       this.timuContent[this.ceyanCurrent].answer = answer
     },
-    submitCeyan() {}
+    submitCeyan(evt) {
+      wx.cloud.callFunction({
+        name: 'submitceyan',
+        data: {
+          ceyanId: this.ceyanId,
+          answerList: this.timuContent
+        },
+        success(res) {
+          console.log(res)
+          wx.showToast({
+            title: res.result.totalSum + '分',
+            duration: 5000
+          })
+        },
+        failed(res) {
+          console.log(res)
+        }
+      })
+      // console.log(this.ceyanId, this.timuContent)
+    }
   }
   // 加载测验卷题目
   async loadCeyan() {
-    let ceyanId = 'XKdAX5T75u22-Ls8'
+    let ceyanId = 'XKsuMieY8flPMpDW'
     let ceyanData = await ceyanModel.fetchDetail(ceyanId)
     // console.log(ceyanData)
     this.ceyanName = ceyanData.name
+    this.ceyanId = ceyanData._id
     let timuList = ceyanModel.flatTimu(ceyanData)
     this.timuList = timuList
     this.ceyanTotal = timuList.length
