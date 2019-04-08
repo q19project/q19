@@ -1,0 +1,6 @@
+module.exports = {
+  text: 'This is from wxs',
+  inArr: function (target, arr) {
+    return arr.indexOf(target) > -1
+  }
+}
