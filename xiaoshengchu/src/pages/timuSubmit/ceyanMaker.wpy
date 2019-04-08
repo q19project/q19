@@ -1,0 +1,145 @@
+<template>
+  <view class="page">
+    <view class="page__bd">
+      <view class="weui-panel weui-panel_access">
+        <view class="weui-panel__bd">
+          <view class="weui-cell weui-cell_input">
+            <view class="weui-cell__hd">
+              <view class="weui-label">名称：</view>
+            </view>
+            <view class="weui-cell__bd">
+              <input class="weui-input" @input="setName" placeholder="请输入名称" />
+            </view>
+          </view>
+          <view class="weui-cell weui-cell_input">
+            <view class="weui-cell__hd">
+              <view class="weui-label">题目：</view>
+            </view>
+            <view class="weui-cell__bd">
+              <checkbox-group @change="checkTimu">
+                <view wx:for="{{timuList}}" wx:key="_id">
+                  <label class="weui-cell weui-check__label">
+                    <view>
+                      <checkbox class="wui-check" value="{{item._id}}">{{item.content}}</checkbox>
+                    </view>
+                  </label>
+                  <view wx:if="{{m1.inArr(item._id,chooseTimu)}}">
+                    <label>数量：</label><input data-id="{{item._id}}" @input="setTimuNumber" />
+                  </view>
+                  <view wx:if="{{m1.inArr(item._id,chooseTimu)}}">
+                    <label>每题分值：</label><input data-id="{{item._id}}" @input="setTimuScore" />
+                  </view>
+                </view>
+              </checkbox-group>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view style="text-align: center;">
+      <button type="primary" class="weui-btn btn-mini" size="mini" @tap="makeCeyan">制作</button>
+    </view>
+    <footer>王牌战队 @copyright 2019 </footer>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import timuModel from '../../model/timuModel.js'
+import timuWxs from '../../model/timu.wxs'
+
+export default class ceyanMaker extends wepy.page {
+  config = {
+    navigationBarTitleText: '制作测验卷'
+  }
+  wxs = {
+    m1: timuWxs
+  }
+  data = {
+    timuList: [],
+    name: '',
+    number: {},
+    score: {},
+    chooseTimu: [],
+    ceyanId: ''
+  }
+  loadTimu() {
+    // let _self = this
+    timuModel
+      .loadTimu()
+      .where({
+        transform: true
+      })
+      .get()
+      .then(res => {
+        this.timuList = res.data
+        this.$apply()
+      })
+  }
+
+  methods = {
+    setTimuNumber(evt) {
+      let id = evt.currentTarget.dataset.id
+      this.number[id] = evt.detail.value
+    },
+    setTimuScore(evt) {
+      let id = evt.currentTarget.dataset.id
+      this.score[id] = evt.detail.value
+    },
+    setName(evt) {
+      this.name = evt.detail.value
+    },
+    checkTimu(evt) {
+      console.log(evt)
+      const ids = evt.detail.value
+      // console.log(id);
+      this.chooseTimu = ids
+      // console.log(this.chooseTimu.indexOf('XKIp6pT75u2277bm') > -1)
+      this.$apply()
+    },
+    makeCeyan() {
+      console.log(this.chooseTimu)
+      const ceyanColl = timuModel.loadCeyan()
+      console.log(ceyanColl)
+      // 名称不能为空
+
+      let ceyanData = {
+        timu: this.chooseTimu,
+        name: this.name,
+        number: this.number,
+        score: this.score,
+        submittime: Date.now(),
+        total: 100
+      }
+
+      // TODO: 校验完备
+      if (!this.name) {
+        return void wx.showToast({
+          title: '测验卷名称不能为空'
+        })
+      } else {
+        console.log(ceyanData)
+        ceyanColl.add({
+          data: ceyanData,
+          success: function() {
+            wx.showToast({
+              title: '制作完成'
+            })
+          }
+        })
+      }
+    }
+  }
+  onLoad(options) {
+    console.log('onload', options)
+    if (options.id) {
+      // 加载指定测验卷数据
+      // this.setData({
+      //   ceyanId: options.id
+      // })
+      this.loadTimu()
+    } else {
+      this.loadTimu()
+    }
+  }
+}
+</script>
