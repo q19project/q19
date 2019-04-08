@@ -1,0 +1,18 @@
+{
+	"miniprogramRoot": "dist/",
+	"description": "Xiao Sheng Chu TiKu",
+	"cloudfunctionRoot": "cloudfunctions/",
+	"setting": {
+		"urlCheck": true,
+		"es6": false,
+		"postcss": false,
+		"minified": false,
+		"newFeature": true,
+		"nodeModules": false,
+		"autoAudits": false
+	},
+	"appid": "wx8e37914a068c78d3",
+	"projectname": "q19_master",
+	"libVersion": "2.2.5",
+	"compileType": "miniprogram"
+}
