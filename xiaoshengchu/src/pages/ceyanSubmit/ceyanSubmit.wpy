@@ -159,8 +159,8 @@ export default class ceyanSubmit extends wepy.page {
     }
   }
   // 加载测验卷题目
-  async loadCeyan() {
-    let ceyanId = 'XKsuMieY8flPMpDW'
+  async loadCeyan(ceyanId) {
+    ceyanId = ceyanId || 'XKsuMieY8flPMpDW'
     let ceyanData = await ceyanModel.fetchDetail(ceyanId)
     // console.log(ceyanData)
     this.ceyanName = ceyanData.name
@@ -197,7 +197,14 @@ export default class ceyanSubmit extends wepy.page {
     }, 100)
   }
   onLoad(options) {
-    this.loadCeyan()
+    let ceyanId = options.ceyanId
+    this.loadCeyan(ceyanId)
+  }
+  onShareAppMessage(object) {
+    return {
+      title: '小升初题库',
+      url: '/page/ceyanSubmit/ceyanSubmit?ceyanId=' + this.ceyanId
+    }
   }
 }
 </script>
