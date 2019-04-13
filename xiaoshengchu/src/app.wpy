@@ -51,6 +51,7 @@ export default class extends wepy.app {
       'pages/timuSubmit/ceyanMaker',
       'pages/memberCenter/memberCenter',
       'pages/timuSubmit/timuSubmit',
+      'pages/ceyanResult/ceyanResult',
       'pages/ceyanSubmit/ceyanSubmit'
     ],
     window: {
