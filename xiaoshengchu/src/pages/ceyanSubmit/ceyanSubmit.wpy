@@ -103,7 +103,7 @@
 import wepy from 'wepy'
 import ceyanModel from '../../model/ceyanModel'
 import timuModel from '../../model/timuModel'
-import { recordStart, recordEnd } from '../../model/timerRecord'
+import { recordStart, recordEnd, recordGetAll } from '../../model/timerRecord'
 
 export default class ceyanSubmit extends wepy.page {
   config = {
@@ -148,14 +148,22 @@ export default class ceyanSubmit extends wepy.page {
         name: 'submitceyan',
         data: {
           ceyanId: this.ceyanId,
-          answerList: this.timuContent
+          answerList: this.timuContent,
+          static: recordGetAll()
         },
         success(res) {
-          console.log(res)
+          // console.log(res)
           wx.showToast({
-            title: res.result.totalSum + '分',
+            title: res.result.totalSum + '分，结算中',
             duration: 5000
           })
+          setTimeout(function() {
+            wx.navigateTo({
+              url:
+                '/pages/ceyanResult/ceyanResult?resultId=' +
+                res.result.resultId._id
+            })
+          }, 5000)
         },
         failed(res) {
           console.log(res)
@@ -209,6 +217,7 @@ export default class ceyanSubmit extends wepy.page {
   }
   onLoad(options) {
     let ceyanId = options.ceyanId
+    ceyanId = 'f4cf49925cb1e86405e3afca532756f5'
     this.loadCeyan(ceyanId)
   }
   onShow() {
@@ -222,7 +231,7 @@ export default class ceyanSubmit extends wepy.page {
   onShareAppMessage(object) {
     return {
       title: '小升初题库',
-      url: '/page/ceyanSubmit/ceyanSubmit?ceyanId=' + this.ceyanId
+      url: '/pages/ceyanSubmit/ceyanSubmit?ceyanId=' + this.ceyanId
     }
   }
 }
