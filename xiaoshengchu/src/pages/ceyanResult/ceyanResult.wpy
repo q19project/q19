@@ -1,0 +1,97 @@
+<style>
+.avator {
+  width: 100rpx;
+  height: 100rpx;
+  /* border-radius: 10rpx; */
+}
+</style>
+<template>
+  <view class="page">
+    <view class="page__bd">
+      <view class="avator">
+        <open-data class="avator" type="userAvatarUrl"></open-data>
+        <open-data class="avator" type="userNickName"></open-data>
+        <F2Canvas :opts="opts" canvasId="circle" width="750" height="400"></F2Canvas>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import F2Canvas from 'wepy-antv-f2/F2Canvas'
+// antv f2 抽离到 mini-program-utils, 都经过babel 编译
+import F2 from 'mini-program-utils/dist/f2/adapterF2'
+
+let chart = null
+let resultId = ''
+const initChart = async function(canvas, width, height) {
+  const db = wx.cloud.database()
+  const coll = db.collection('ceyanresult')
+  console.log(resultId)
+  let result = await coll
+    .where({
+      _id: resultId
+    })
+    .get()
+  let data = []
+  for (let itemkey in result.data[0].static) {
+    let item = result.data[0].static[itemkey]
+    data.push({
+      timu: itemkey,
+      timer: item.timer_duration
+    })
+  }
+
+  // const data = [
+  //   { year: '1951 年', sales: 38 },
+  //   { year: '1952 年', sales: 52 },
+  //   { year: '1956 年', sales: 61 },
+  //   { year: '1957 年', sales: 145 },
+  //   { year: '1958 年', sales: 48 },
+  //   { year: '1959 年', sales: 38 },
+  //   { year: '1960 年', sales: 38 },
+  //   { year: '1962 年', sales: 38 }
+  // ]
+  chart = new F2.Chart({
+    el: canvas,
+    width,
+    height
+  })
+
+  chart.source(data, {
+    timer: {
+      tickCount: 5
+    }
+  })
+  chart.tooltip({
+    showItemMarker: false,
+    onShow(ev) {
+      const { items } = ev
+      items[0].name = null
+      items[0].name = items[0].title
+      items[0].value = '¥ ' + items[0].value
+    }
+  })
+  chart.interval().position('timu*timer')
+  chart.render()
+  return chart
+}
+
+export default class ceyanResult extends wepy.page {
+  config = {
+    navigationBarTitleText: '测验结果'
+  }
+  components = {
+    F2Canvas
+  }
+  data = {
+    opts: {
+      onInit: initChart
+    }
+  }
+
+  onLoad(options) {
+    resultId = options.resultId
+  }
+}
+</script>
