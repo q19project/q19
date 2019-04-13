@@ -92,5 +92,13 @@ export default class extends wepy.app {
 
     console.log('on launch')
   }
+
+  onShow() {
+    console.log('小程序切前台')
+  }
+
+  onHide() {
+    console.log('小程序切后台')
+  }
 }
 </script>

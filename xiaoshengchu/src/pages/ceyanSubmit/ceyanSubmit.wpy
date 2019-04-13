@@ -103,6 +103,8 @@
 import wepy from 'wepy'
 import ceyanModel from '../../model/ceyanModel'
 import timuModel from '../../model/timuModel'
+import { recordStart, recordEnd } from '../../model/timerRecord'
+
 export default class ceyanSubmit extends wepy.page {
   config = {
     navigationBarTitleText: '做题'
@@ -115,17 +117,21 @@ export default class ceyanSubmit extends wepy.page {
     answerFocus: true,
     timuList: [],
     timuContent: [],
-    loadingTimuFlag: false // 状态位
+    loadingTimuFlag: false, // 状态位
+    timuTime: [] // 记录每题的做题时间
   }
   methods = {
     prevTimu: function() {
       let current = this.ceyanCurrent
+      // 记录结束时间
+      recordEnd({ name: 'ceyan_' + current })
       if (current > 0) {
         this.loadTimuIndex(current - 1)
       }
     },
     nextTimu: function() {
       let current = this.ceyanCurrent
+      recordEnd({ name: 'ceyan_' + current })
       if (current < this.timuList.length - 1) {
         this.loadTimuIndex(current + 1)
       }
@@ -172,6 +178,7 @@ export default class ceyanSubmit extends wepy.page {
     // 将数据扁平化，过程中生成具体题目
     this.loadTimuIndex(0)
   }
+  // 加载指定位置的题目
   async loadTimuIndex(index) {
     this.loadingTimuFlag = true
     // 获取题目
@@ -179,6 +186,10 @@ export default class ceyanSubmit extends wepy.page {
     let timuId = this.timuList[index]
     // 获取题目id
     let timuData = await timuModel.fetchDetail(timuId, index)
+    // 打点记录答题时间
+    recordStart({ name: 'ceyan_' + index })
+    // let prevTime = this.timuTime[index] || 0
+    // let nowTime = new Date().getTime()
     // let answer = ''
     if (typeof this.timuContent[index] !== 'undefined') {
       // answer = timuContent[index].answer
@@ -200,6 +211,14 @@ export default class ceyanSubmit extends wepy.page {
     let ceyanId = options.ceyanId
     this.loadCeyan(ceyanId)
   }
+  onShow() {
+    console.log('页面切前台')
+  }
+
+  onHide() {
+    console.log('页面切后台')
+  }
+
   onShareAppMessage(object) {
     return {
       title: '小升初题库',
