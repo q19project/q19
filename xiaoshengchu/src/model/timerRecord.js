@@ -42,5 +42,10 @@ const recordEnd = function (options) {
 
 }
 
+const recordGetAll = function() {
+  return recordData
+}
+
 exports.recordEnd = recordEnd
 exports.recordStart = recordStart
+exports.recordGetAll = recordGetAll
