@@ -144,6 +144,12 @@ export default class ceyanSubmit extends wepy.page {
       this.timuContent[this.ceyanCurrent].answer = answer
     },
     submitCeyan(evt) {
+      recordEnd({
+        name: 'ceyan_' + this.ceyanCurrent
+      })
+      wx.showLoading({
+        title: '结算中'
+      })
       wx.cloud.callFunction({
         name: 'submitceyan',
         data: {
@@ -153,17 +159,12 @@ export default class ceyanSubmit extends wepy.page {
         },
         success(res) {
           // console.log(res)
-          wx.showToast({
-            title: res.result.totalSum + '分，结算中',
-            duration: 5000
+          wx.hideLoading()
+          wx.navigateTo({
+            url:
+              '/pages/ceyanResult/ceyanResult?resultId=' +
+              res.result.resultId._id
           })
-          setTimeout(function() {
-            wx.navigateTo({
-              url:
-                '/pages/ceyanResult/ceyanResult?resultId=' +
-                res.result.resultId._id
-            })
-          }, 5000)
         },
         failed(res) {
           console.log(res)
