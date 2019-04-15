@@ -1,7 +1,6 @@
 <style>
-.avator {
-  width: 100rpx;
-  height: 100rpx;
+.timer-area {
+  text-align: center;
   /* border-radius: 10rpx; */
 }
 .answer-area {
@@ -13,12 +12,14 @@
   padding: 10rpx;
   min-height: 400rpx;
   text-align: center;
+  align-content: flex-start;
 }
 
 .answer-score-area {
   display: flex;
   justify-content: center;
   margin: 40rpx;
+  flex-direction: row;
 }
 .answer-score {
   border-radius: 80rpx;
@@ -27,6 +28,13 @@
   background: #fff;
   text-align: center;
   line-height: 160rpx;
+}
+
+.answer-title {
+  width: 100%;
+  height: 40rpx;
+  align-self: center;
+  margin-bottom: 10rpx;
 }
 
 .answer-item {
@@ -50,11 +58,13 @@
       </view>
     </view>
     <view class="answer-area">
+      <view class="answer-title">答题情况</view>
       <view class="answer-item answer-{{item.result}}" wx:for="{{answer}}" wx:key="{{key}}">
         第{{index + 1}}题
       </view>
     </view>
-    <view class="avator">
+    <view class="timer-area">
+      <view>每题花费时间</view>
       <F2Canvas :opts="opts" canvasId="circle" width="750" height="400"></F2Canvas>
     </view>
   </view>
@@ -63,6 +73,8 @@
 import wepy from 'wepy'
 import timuWxs from '../../model/timu.wxs'
 import F2Canvas from 'wepy-antv-f2/F2Canvas'
+import { static2chart } from '../../model/util.js'
+
 // antv f2 抽离到 mini-program-utils, 都经过babel 编译
 import F2 from 'mini-program-utils/dist/f2/adapterF2'
 
@@ -79,27 +91,8 @@ const initChart = async function(canvas, width, height) {
     })
     .get()
 
-  // console.log(result.data[0])
-  // console.log(resultData)
-  let data = []
-  for (let itemkey in resultData.data[0].static) {
-    let item = resultData.data[0].static[itemkey]
-    data.push({
-      timu: itemkey,
-      timer: item.timer_duration
-    })
-  }
+  let data = static2chart(resultData.data[0].static)
 
-  // const data = [
-  //   { year: '1951 年', sales: 38 },
-  //   { year: '1952 年', sales: 52 },
-  //   { year: '1956 年', sales: 61 },
-  //   { year: '1957 年', sales: 145 },
-  //   { year: '1958 年', sales: 48 },
-  //   { year: '1959 年', sales: 38 },
-  //   { year: '1960 年', sales: 38 },
-  //   { year: '1962 年', sales: 38 }
-  // ]
   chart = new F2.Chart({
     el: canvas,
     width,
@@ -108,7 +101,11 @@ const initChart = async function(canvas, width, height) {
 
   chart.source(data, {
     timer: {
-      tickCount: 5
+      tickCount: 5,
+      alias: '耗时',
+      formatter: function(val) {
+        return Math.floor(val / 1000) + '秒'
+      }
     }
   })
   chart.tooltip({
@@ -117,7 +114,7 @@ const initChart = async function(canvas, width, height) {
       const { items } = ev
       items[0].name = null
       items[0].name = items[0].title
-      items[0].value = '¥ ' + items[0].value
+      items[0].value = items[0].value
     }
   })
   chart.interval().position('timu*timer')
@@ -158,7 +155,7 @@ export default class ceyanResult extends wepy.page {
         success(result) {
           // console.log('loadResult', result)
           let data = result.data[0]
-          // console.log(data)
+          console.log(data)
           self.resultData = data
           self.answer = data.answer
           self.totalSum = data.score
