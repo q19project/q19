@@ -4,38 +4,86 @@
   height: 100rpx;
   /* border-radius: 10rpx; */
 }
+.answer-area {
+  background: #f1f2f3;
+  margin: 10rpx;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  padding: 10rpx;
+  min-height: 400rpx;
+  text-align: center;
+}
+
+.answer-score-area {
+  display: flex;
+  justify-content: center;
+  margin: 40rpx;
+}
+.answer-score {
+  border-radius: 80rpx;
+  width: 160rpx;
+  height: 160rpx;
+  background: #fff;
+  text-align: center;
+  line-height: 160rpx;
+}
+
+.answer-item {
+  width: 150rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  margin-right: 20rpx;
+  text-align: center;
+  color: #333;
+  background: #c0c0dd;
+}
+.answer-wrong {
+  background: #f00;
+}
 </style>
 <template>
   <view class="page">
-    <view class="page__bd">
-      <view class="avator">
-        <open-data class="avator" type="userAvatarUrl"></open-data>
-        <open-data class="avator" type="userNickName"></open-data>
-        <F2Canvas :opts="opts" canvasId="circle" width="750" height="400"></F2Canvas>
+    <view class="answer-score-area">
+      <view class="answer-score">
+        {{m1.round0(totalSum)}}
       </view>
+    </view>
+    <view class="answer-area">
+      <view class="answer-item answer-{{item.result}}" wx:for="{{answer}}" wx:key="{{key}}">
+        第{{index + 1}}题
+      </view>
+    </view>
+    <view class="avator">
+      <F2Canvas :opts="opts" canvasId="circle" width="750" height="400"></F2Canvas>
     </view>
   </view>
 </template>
 <script>
 import wepy from 'wepy'
+import timuWxs from '../../model/timu.wxs'
 import F2Canvas from 'wepy-antv-f2/F2Canvas'
 // antv f2 抽离到 mini-program-utils, 都经过babel 编译
 import F2 from 'mini-program-utils/dist/f2/adapterF2'
 
 let chart = null
 let resultId = ''
+
 const initChart = async function(canvas, width, height) {
   const db = wx.cloud.database()
   const coll = db.collection('ceyanresult')
-  console.log(resultId)
-  let result = await coll
+  // console.log(resultId)
+  let resultData = await coll
     .where({
       _id: resultId
     })
     .get()
+
+  // console.log(result.data[0])
+  // console.log(resultData)
   let data = []
-  for (let itemkey in result.data[0].static) {
-    let item = result.data[0].static[itemkey]
+  for (let itemkey in resultData.data[0].static) {
+    let item = resultData.data[0].static[itemkey]
     data.push({
       timu: itemkey,
       timer: item.timer_duration
@@ -84,14 +132,44 @@ export default class ceyanResult extends wepy.page {
   components = {
     F2Canvas
   }
+  wxs = {
+    m1: timuWxs
+  }
+
   data = {
     opts: {
       onInit: initChart
-    }
+    },
+    totalSum: 0,
+    answer: [],
+    resultData: {}
+  }
+
+  loadResult(resultId) {
+    const db = wx.cloud.database()
+    const coll = db.collection('ceyanresult')
+    // console.log(resultId)
+    let self = this
+    coll
+      .where({
+        _id: resultId
+      })
+      .get({
+        success(result) {
+          // console.log('loadResult', result)
+          let data = result.data[0]
+          // console.log(data)
+          self.resultData = data
+          self.answer = data.answer
+          self.totalSum = data.score
+          self.$apply()
+        }
+      })
   }
 
   onLoad(options) {
     resultId = options.resultId
+    this.loadResult(resultId)
   }
 }
 </script>
