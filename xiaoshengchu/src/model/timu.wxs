@@ -2,5 +2,11 @@ module.exports = {
   text: 'This is from wxs',
   inArr: function (target, arr) {
     return arr.indexOf(target) > -1
+  },
+  round2: function(num) {
+    return Math.round( num * 100) / 100
+  },
+  round0: function(num) {
+   return Math.round(num)
   }
 }
