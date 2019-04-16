@@ -52,13 +52,15 @@ export default class extends wepy.app {
       'pages/memberCenter/memberCenter',
       'pages/timuSubmit/timuSubmit',
       'pages/ceyanResult/ceyanResult',
-      'pages/ceyanSubmit/ceyanSubmit'
+      'pages/ceyanSubmit/ceyanSubmit',
+      'pages/ceyanSubmit/ceyanList'
     ],
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
       navigationBarTitleText: 'WeChat',
-      navigationBarTextStyle: 'black'
+      navigationBarTextStyle: 'black',
+      enablePullDownRefresh: true
     },
     tabBar: {
       position: 'top',
@@ -68,7 +70,7 @@ export default class extends wepy.app {
           text: '主页'
         },
         {
-          pagePath: 'pages/ceyanSubmit/ceyanSubmit',
+          pagePath: 'pages/ceyanSubmit/ceyanList',
           text: '做题'
         },
         {
