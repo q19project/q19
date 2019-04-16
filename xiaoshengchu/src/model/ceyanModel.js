@@ -47,6 +47,17 @@ const fetchDetail = async (ceyanId) => {
   console.log(ceyanData)
   return ceyanData
 }
+
+// 获取在首页显示的测验卷
+const fetchLatestCeyan = async () => {
+  let coll = loadCeyan()
+  let res = await coll.where({
+
+  }).get()
+  console.log(res)
+  return res.data
+}
+exports.fetchLatestCeyan = fetchLatestCeyan
 exports.fetchDetail = fetchDetail
 exports.flatTimu = flatTimu
 
