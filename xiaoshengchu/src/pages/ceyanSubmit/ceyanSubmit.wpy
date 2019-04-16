@@ -218,7 +218,6 @@ export default class ceyanSubmit extends wepy.page {
   }
   onLoad(options) {
     let ceyanId = options.ceyanId
-    ceyanId = 'f4cf49925cb1e86405e3afca532756f5'
     this.loadCeyan(ceyanId)
   }
   onShow() {
