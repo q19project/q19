@@ -39,7 +39,6 @@
     <view style="text-align: center;">
       <button type="primary" class="weui-btn btn-mini" size="mini" @tap="makeCeyan">制作</button>
     </view>
-    <footer>王牌战队 @copyright 2019 </footer>
   </view>
 </template>
 <script>
@@ -49,7 +48,7 @@ import timuWxs from '../../model/timu.wxs'
 
 export default class ceyanMaker extends wepy.page {
   config = {
-    navigationBarTitleText: '制作测验卷'
+    navigationBarTitleText: '个人中心 -  制作测验卷'
   }
   wxs = {
     m1: timuWxs
