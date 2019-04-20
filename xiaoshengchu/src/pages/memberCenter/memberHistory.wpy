@@ -31,7 +31,7 @@
   <view class="page">
     <view class="ceyan-list">
       <view class="ceyan-item" wx:for="{{historyData}}" wx:key="_id">
-        <text data-id="{{item._id}}">{{item.ceyan.data[0].name}} {{m1.time2str(item.submittime)}}</text>
+        <text data-id="{{item._id}}">{{item.ceyan.data[0].name}} {{m1.time2str(item.submittime)}} {{item.score}}分</text>
         <view class="right-fixed">
           <navigator class="nav" url="/pages/timuSubmit/ceyanMaker?ceyanId={{item._id}}">
             <button class="btn" size="mini" type="primary">编辑</button>
