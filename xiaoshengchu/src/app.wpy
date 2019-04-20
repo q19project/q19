@@ -33,6 +33,20 @@ page {
   text-align: left;
   font-size: 14px;
 }
+
+.ceyan-list {
+  text-align: center;
+}
+.ceyan-item {
+  border-bottom: 1px solid #aaa;
+  height: 80rpx;
+  width: 100%;
+  margin-top: 10rpx;
+  text-align: left;
+  padding-left: 20rpx;
+  font-size: 28rpx;
+  line-height: 80rpx;
+}
 </style>
 
 <script>
@@ -47,16 +61,18 @@ export default class extends wepy.app {
 
   config = {
     pages: [
-      'pages/index',
-      'pages/timuSubmit/ceyanMaker',
-      'pages/memberCenter/memberCenter',
-      'pages/timuSubmit/timuSubmit',
-      'pages/ceyanResult/ceyanResult',
-      'pages/ceyanSubmit/ceyanSubmit',
-      'pages/ceyanSubmit/ceyanList'
+      // 用户
+      'pages/index', // 入口页
+      'pages/memberCenter/memberCenter', // 个人中心
+      'pages/ceyanResult/ceyanResult', // 测验结果
+      'pages/ceyanSubmit/ceyanSubmit', // 做测验卷
+      'pages/ceyanSubmit/ceyanList', // 测验卷列表
+      // 管理员
+      'pages/timuSubmit/timuSubmit', // 提交题目
+      'pages/timuSubmit/ceyanMaker' // 制作测验卷
     ],
     window: {
-      backgroundTextStyle: 'light',
+      backgroundTextStyle: 'dark',
       navigationBarBackgroundColor: '#fff',
       navigationBarTitleText: 'WeChat',
       navigationBarTextStyle: 'black',

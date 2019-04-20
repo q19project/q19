@@ -1,23 +1,17 @@
 <style>
-.ceyan-list {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-.ceyan-item {
-  border-bottom: 1rpx solid #ccc;
-  margin-top: 20rpx;
-  color: #666;
+.app-desc {
+  padding: 20rpx;
 }
 </style>
 <template>
   <view class="page">
-    <view class="page__hd">
-      2019年{{today}}，欢迎来到小升初题库。选择一份卷子做起来吧！
-      <view class="ceyan-list">
-        <view class="ceyan-item" wx:for="{{ceyanList}}" wx:key="_id">
-          <navigator url="{{'/pages/ceyanSubmit/ceyanSubmit?ceyanId=' + item._id }}"><text data-id="{{item._id}}">{{item.name}}</text></navigator>
-        </view>
+    <view class="app-desc">2019年{{today}}，欢迎来到小升初题库。选择一份卷子做起来吧！
+    </view>
+    <view class="ceyan-list">
+      <view class="ceyan-item" wx:for="{{ceyanList}}" wx:key="_id">
+        <navigator url="{{'/pages/ceyanSubmit/ceyanSubmit?ceyanId=' + item._id }}">
+          <text data-id="{{item._id}}">{{item.name}}</text>
+        </navigator>
       </view>
     </view>
   </view>
