@@ -1,0 +1,86 @@
+<style>
+.ceyan-item {
+  border-bottom: 1px solid #aaa;
+  height: 80rpx;
+  width: 100%;
+  margin-top: 10rpx;
+  text-align: left;
+  padding-left: 20rpx;
+  font-size: 28rpx;
+  line-height: 80rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.right-fixed {
+  flex: none;
+  width: 160rpx;
+  display: flex;
+  padding-right: 20rpx;
+  align-items: center;
+  justify-content: center;
+}
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>
+<template>
+  <view class="page">
+    <view class="ceyan-list">
+      <view class="ceyan-item" wx:for="{{historyData}}" wx:key="_id">
+        <text data-id="{{item._id}}">{{item.ceyan.data[0].name}} {{m1.time2str(item.submittime)}}</text>
+        <view class="right-fixed">
+          <navigator class="nav" url="/pages/timuSubmit/ceyanMaker?ceyanId={{item._id}}">
+            <button class="btn" size="mini" type="primary">编辑</button>
+          </navigator>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import timuWxs from '../../model/timu.wxs'
+
+export default class memberHistory extends wepy.page {
+  config = {
+    navigationBarTitleText: '个人中心 - 历史成绩'
+  }
+
+  wxs = {
+    m1: timuWxs
+  }
+
+  data = {
+    isAdmin: false,
+    historyData: []
+  }
+
+  loadData() {
+    console.log('loadData')
+    const db = wx.cloud.database()
+    const coll = db.collection('ceyanresult').orderBy('submittime', 'desc')
+    // console.log(resultId)
+    let self = this
+    coll.get({
+      success(result) {
+        // console.log('loadResult', result)
+        let data = result
+        console.log(data)
+        self.historyData = data.data
+        // self.resultData = data
+        // self.answer = data.answer
+        // self.totalSum = data.score
+        self.$apply()
+      }
+    })
+  }
+
+  onLoad() {
+    this.loadData()
+  }
+}
+</script>

@@ -8,5 +8,9 @@ module.exports = {
   },
   round0: function(num) {
    return Math.round(num)
+  },
+  time2str: function(timestamp) {
+    var d1 = getDate(timestamp)
+    return d1.getFullYear() + '-' + (d1.getMonth() + 1) + '-' + d1.getDate()
   }
 }

@@ -67,6 +67,7 @@ export default class extends wepy.app {
       'pages/ceyanResult/ceyanResult', // 测验结果
       'pages/ceyanSubmit/ceyanSubmit', // 做测验卷
       'pages/ceyanSubmit/ceyanList', // 测验卷列表
+      'pages/memberCenter/memberHistory', // 历史成绩
       // 管理员
       'pages/timuSubmit/timuSubmit', // 提交题目
       'pages/timuSubmit/ceyanList', // 管理测验卷
