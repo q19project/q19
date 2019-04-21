@@ -1,0 +1,69 @@
+<style>
+.ceyan-list {
+  text-align: center;
+}
+.ceyan-item {
+  border-bottom: 1px solid #aaa;
+  height: 80rpx;
+  width: 100%;
+  margin-top: 10rpx;
+  text-align: left;
+  padding-left: 20rpx;
+  font-size: 28rpx;
+  line-height: 80rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.right-fixed {
+  flex: none;
+  width: 160rpx;
+  display: flex;
+  padding-right: 20rpx;
+  align-items: center;
+  justify-content: center;
+}
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>
+
+<template>
+  <view class="ceyan-list">
+    <view class="ceyan-item" wx:for="{{ceyanList}}" wx:key="_id">
+      <text data-id="{{item._id}}">{{item.name}}</text>
+      <view class="right-fixed">
+        <navigator class="nav" url="/pages/ceyanSubmit/ceyanSubmit?ceyanId={{item._id}}">
+          <button class="btn" size="mini" type="primary">去做</button>
+        </navigator>
+      </view>
+    </view>
+  </view>
+
+</template>
+<script>
+import wepy from 'wepy'
+import { fetchLatestCeyan } from '../../model/ceyanModel.js'
+
+export default class ceyanList extends wepy.page {
+  config = {
+    navigationBarTitleText: '做题'
+  }
+
+  data = {
+    ceyanList: []
+  }
+
+  onLoad() {
+    console.log('onLoad')
+    let self = this
+    fetchLatestCeyan().then(res => {
+      self.ceyanList = res
+      self.$apply()
+    })
+  }
+}
+</script>

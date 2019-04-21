@@ -1,0 +1,61 @@
+<style>
+.app-desc {
+  padding: 20rpx;
+}
+</style>
+<template>
+  <view class="page">
+    <view class="app-desc">2019年{{today}}，欢迎来到小升初题库。选择一份卷子做起来吧！
+    </view>
+    <view class="ceyan-list">
+      <view class="ceyan-item" wx:for="{{ceyanList}}" wx:key="_id">
+        <navigator url="{{'/pages/ceyanSubmit/ceyanSubmit?ceyanId=' + item._id }}">
+          <text data-id="{{item._id}}">{{item.name}}</text>
+        </navigator>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import { fetchLatestCeyan } from '../model/ceyanModel.js'
+
+export default class Latest extends wepy.page {
+  config = {
+    navigationBarTitleText: '最近更新'
+  }
+
+  data = {
+    today: new Date().getMonth() + 1 + '月' + new Date().getDate() + '日',
+    ceyanList: []
+  }
+
+  methods = {
+    gotoCeyan(evt) {
+      let ceyanId = evt.currentTarget.dataset.id
+      wx.navigateTo({
+        url: '/pages/ceyanSubmit/ceyanSubmit?ceyanId=' + ceyanId
+      })
+    }
+  }
+
+  onLoad() {
+    console.log('onLoad')
+    let self = this
+    fetchLatestCeyan().then(res => {
+      self.ceyanList = res
+      self.$apply()
+    })
+  }
+
+  onPullDownRefresh() {
+    let self = this
+    fetchLatestCeyan().then(res => {
+      self.ceyanList = res
+      self.$apply()
+      wx.stopPullDownRefresh()
+    })
+  }
+}
+</script>

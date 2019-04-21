@@ -62,6 +62,7 @@ export default class extends wepy.app {
   config = {
     pages: [
       // 用户
+      'pages/latest', // 最新更新页
       'pages/index', // 入口页
       'pages/memberCenter/memberCenter', // 个人中心
       'pages/ceyanResult/ceyanResult', // 测验结果
@@ -84,16 +85,12 @@ export default class extends wepy.app {
       position: 'top',
       list: [
         {
-          pagePath: 'pages/index',
-          text: '主页'
+          pagePath: 'pages/latest',
+          text: '最新更新'
         },
         {
           pagePath: 'pages/ceyanSubmit/ceyanList',
           text: '做题'
-        },
-        {
-          pagePath: 'pages/memberCenter/memberCenter',
-          text: '个人中心'
         }
       ]
     }

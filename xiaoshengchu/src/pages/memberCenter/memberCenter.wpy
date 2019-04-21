@@ -1,7 +1,7 @@
 <style>
 .menu-area {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   flex-direction: row;
   flex-wrap: wrap;
   align-items: flex-start;
@@ -12,10 +12,10 @@
   background: #c0c0f0;
   width: 180rpx;
   height: 180rpx;
-  margin: 20rpx;
+  margin: 33rpx;
   line-height: 180rpx;
   text-align: center;
-  color:#333;
+  color: #333;
 }
 .menu-title {
   width: 750rpx;
@@ -28,19 +28,16 @@
     <view class="menu-area">
       <view class="menu-title">我能干什么：</view>
       <view class="menu-item">
-        <navigator url='/pages/memberCenter/myResult'>我的错题</navigator>
-      </view>
-      <view class="menu-item">
-        <navigator url='/pages/memberCenter/myResult'>历史成绩</navigator>
+        <navigator url='/pages/memberCenter/memberHistory'>历史成绩</navigator>
       </view>
       <view class="menu-item">
         <navigator url='/pages/timuSubmit/timuSubmit'>录入题目</navigator>
       </view>
-      <view class="menu-item">
+      <view class="menu-item" wx:if="{{isAdmin}}">
         <navigator url='/pages/timuSubmit/ceyanMaker'>制作测验卷</navigator>
       </view>
-      <view class="menu-item">
-        <navigator url='/pages/ceyanList/ceyanList'>测验卷列表</navigator>
+      <view class="menu-item" wx:if="{{isAdmin}}">
+        <navigator url='/pages/timuSubmit/ceyanList'>测验卷列表</navigator>
       </view>
     </view>
   </view>
@@ -51,6 +48,25 @@ import wepy from 'wepy'
 export default class memberCenter extends wepy.page {
   config = {
     navigationBarTitleText: '个人中心'
+  }
+
+  data = {
+    isAdmin: false
+  }
+
+  onLoad() {
+    let self = this
+    wx.cloud.callFunction({
+      name: 'login',
+      data: {},
+      success(res) {
+        console.log(res)
+        if (res.result.openid === 'oozIR5TXbjwzB01mz1UAPrmGF_NM') {
+          self.isAdmin = true
+          self.$apply()
+        }
+      }
+    })
   }
 }
 </script>
