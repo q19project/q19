@@ -267,8 +267,33 @@ export default class timuSubmit extends wepy.page {
       })
     }
   }
-  onLoad() {
-    console.log('onLoad')
+
+  loadData(timuId) {
+    const db = wx.cloud.database()
+    const timuCollection = db.collection('timu')
+    let self = this
+    timuCollection
+      .where({
+        _id: timuId
+      })
+      .get({
+        success(resp) {
+          console.log(resp)
+          self.content = resp.data[0].content
+          self.answer = resp.data[0].answer
+          self.type = resp.data[0].type
+          self.$apply()
+        }
+      })
+  }
+
+  onLoad(options) {
+    // console.log('onLoad')
+    // 如果是编辑
+    console.log(options.timuId)
+    if (options.timuId) {
+      this.loadData(options.timuId)
+    }
   }
 }
 </script>

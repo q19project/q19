@@ -32,7 +32,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 6,
+			"current": 5,
 			"list": [
 				{
 					"id": -1,
@@ -69,10 +69,10 @@
 					"scene": null
 				},
 				{
-					"id": -1,
+					"id": 5,
 					"name": "提交题目",
 					"pathName": "pages/timuSubmit/timuSubmit",
-					"query": "",
+					"query": "timuId=XKDj0N7E7L4wFF3E",
 					"scene": null
 				},
 				{
