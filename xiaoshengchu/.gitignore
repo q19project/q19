@@ -14,3 +14,8 @@ $RECYCLE.BIN/
 node_modules/
 
 dist
+localfile
+cloudfunctions
+.wepycache
+project.config.json
+package-lock.json

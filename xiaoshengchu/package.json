@@ -12,6 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "wepy": "^1.6.0",
+    "wepy-antv-f2": "^0.0.6",
     "wepy-async-function": "^1.4.7"
   },
   "devDependencies": {

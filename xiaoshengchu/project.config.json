@@ -13,6 +13,76 @@
 	},
 	"appid": "wx8e37914a068c78d3",
 	"projectname": "q19_master",
-	"libVersion": "2.2.5",
-	"compileType": "miniprogram"
+	"libVersion": "2.6.5",
+	"compileType": "miniprogram",
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"plugin": {
+			"current": -1,
+			"list": []
+		},
+		"game": {
+			"list": []
+		},
+		"miniprogram": {
+			"current": 6,
+			"list": [
+				{
+					"id": -1,
+					"name": "db guide",
+					"pathName": "pages/databaseGuide/databaseGuide",
+					"query": ""
+				},
+				{
+					"id": 1,
+					"name": "指定测验卷",
+					"pathName": "pages/ceyanSubmit/ceyanSubmit",
+					"query": "ceyanId=XKsuMieY8flPMpDW",
+					"scene": null
+				},
+				{
+					"id": 2,
+					"name": "测验结果",
+					"pathName": "pages/ceyanResult/ceyanResult",
+					"query": "resultId=71f2cd945cb3d5750691288c5de7cb17",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "个人中心",
+					"pathName": "pages/memberCenter/memberCenter",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "历史成绩",
+					"pathName": "pages/memberCenter/memberHistory",
+					"query": "ceyanId=XKsuMieY8flPMpDW",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "提交题目",
+					"pathName": "pages/timuSubmit/timuSubmit",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "题目列表",
+					"pathName": "pages/timuSubmit/timuList",
+					"query": "",
+					"scene": null
+				}
+			]
+		}
+	}
 }
