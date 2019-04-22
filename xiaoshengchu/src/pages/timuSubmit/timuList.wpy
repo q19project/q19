@@ -3,19 +3,23 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  font-size: 28rpx;
 }
 
 .page-header {
   height: 40rpx;
-  background:cadetblue;
+  background: #c0c0c0;
+  padding: 16rpx;
 }
 .page-footer {
   height: 40rpx;
-  background:cadetblue;
+  background: #c0c0c0;
+  padding: 16rpx;
 }
 
 .timu-item {
-  border-bottom: 1rpx solid #999;
+  border-bottom: 1rpx solid #ccc;
+  padding: 16rpx;
 }
 </style>
 <template>
@@ -23,7 +27,8 @@
     <view class="page-header">题目列表</view>
     <view class="page-content">
       <view class="timu-item" wx:for="{{timuList}}" wx:key="_id">
-        {{item.content}}
+        <view>Q:{{item.content}}</view>
+        <view>A:{{item.answer}}</view>
       </view>
     </view>
     <view class="page-footer">
@@ -47,13 +52,18 @@ export default class timuList extends wepy.page {
     const db = wx.cloud.database()
     const timuCollection = db.collection('timu')
     let self = this
-    timuCollection.get({
-      success(resp) {
-        console.log(resp)
-        self.timuList = resp.data
-        self.$apply()
-      }
-    })
+    timuCollection
+      .where({
+        status: 'checked'
+      })
+      .limit(10)
+      .get({
+        success(resp) {
+          console.log(resp)
+          self.timuList = resp.data
+          self.$apply()
+        }
+      })
   }
 }
 </script>
