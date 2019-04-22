@@ -1,0 +1,59 @@
+<style>
+.page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-header {
+  height: 40rpx;
+  background:cadetblue;
+}
+.page-footer {
+  height: 40rpx;
+  background:cadetblue;
+}
+
+.timu-item {
+  border-bottom: 1rpx solid #999;
+}
+</style>
+<template>
+  <view class="page">
+    <view class="page-header">题目列表</view>
+    <view class="page-content">
+      <view class="timu-item" wx:for="{{timuList}}" wx:key="_id">
+        {{item.content}}
+      </view>
+    </view>
+    <view class="page-footer">
+      分页
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+
+export default class timuList extends wepy.page {
+  config = {
+    navigationBarTitleText: '题目列表'
+  }
+
+  data = {
+    timuList: []
+  }
+
+  onLoad() {
+    const db = wx.cloud.database()
+    const timuCollection = db.collection('timu')
+    let self = this
+    timuCollection.get({
+      success(resp) {
+        console.log(resp)
+        self.timuList = resp.data
+        self.$apply()
+      }
+    })
+  }
+}
+</script>

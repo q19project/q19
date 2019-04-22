@@ -71,6 +71,7 @@ export default class extends wepy.app {
       'pages/memberCenter/memberHistory', // 历史成绩
       // 管理员
       'pages/timuSubmit/timuSubmit', // 提交题目
+      'pages/timuSubmit/timuList', // 题目列表
       'pages/timuSubmit/ceyanList', // 管理测验卷
       'pages/timuSubmit/ceyanMaker' // 制作测验卷
     ],
