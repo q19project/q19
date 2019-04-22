@@ -74,7 +74,7 @@
           <view>A:{{item.answer}}</view>
         </view>
         <view class="timu-item-ope">
-          <button type="primary" class="ope" plain1="false" size="mini">编辑</button>
+          <button @tap="editTimu" data-id="{{item._id}}" type="primary" class="ope" plain1="false" size="mini">编辑</button>
         </view>
       </view>
     </view>
@@ -116,6 +116,12 @@ export default class timuList extends wepy.page {
         this.offset -= this.perpage
       }
       this.loadData()
+    },
+    editTimu(evt) {
+      let id = evt.target.dataset.id
+      wx.navigateTo({
+        url: '/pages/timuSubmit/timuSubmit?timuId=' + id
+      })
     }
   }
   loadData() {
