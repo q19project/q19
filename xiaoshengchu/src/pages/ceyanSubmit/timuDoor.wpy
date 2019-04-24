@@ -1,0 +1,40 @@
+<style>
+</style>
+<template>
+  <view class="page">
+    做题
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import { fetchUserInfo, createUser } from '../../model/userModel.js'
+
+export default class timuDoor extends wepy.page {
+  config = {
+    navigationBarTitleText: '做题'
+  }
+
+  onLoad() {
+    let fetchPromise = fetchUserInfo()
+    fetchPromise.then(function(fetchResp) {
+      if (fetchResp.data.length === 0) {
+        // 没有任何用户信息，建立用户信息跳转至新手引导页面
+        createUser().then(function(createResp) {
+          console.log(createResp)
+          wx.navigateTo({
+            url: '/pages/ceyanSubmit/guideDoor.wpy'
+          })
+        })
+      } else {
+        if (fetchResp.data[0].status === 'new') {
+          wx.navigateTo({
+            url: '/pages/ceyanSubmit/guideDoor.wpy'
+          })
+        }
+        // 已有用户记录，新手任务还未完成，继续完成新手任务
+      }
+    })
+  }
+}
+</script>

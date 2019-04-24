@@ -23,7 +23,7 @@ import { fetchLatestCeyan } from '../model/ceyanModel.js'
 
 export default class Latest extends wepy.page {
   config = {
-    navigationBarTitleText: '最近更新'
+    navigationBarTitleText: '最新更新'
   }
 
   data = {

@@ -68,6 +68,7 @@ export default class extends wepy.app {
       'pages/ceyanResult/ceyanResult', // 测验结果
       'pages/ceyanSubmit/ceyanSubmit', // 做测验卷
       'pages/ceyanSubmit/ceyanList', // 测验卷列表
+      'pages/ceyanSubmit/timuDoor', // 做题入口
       'pages/memberCenter/memberHistory', // 历史成绩
       // 管理员
       'pages/timuSubmit/timuSubmit', // 提交题目
@@ -90,7 +91,7 @@ export default class extends wepy.app {
           text: '最新更新'
         },
         {
-          pagePath: 'pages/ceyanSubmit/ceyanList',
+          pagePath: 'pages/ceyanSubmit/timuDoor',
           text: '做题'
         }
       ]
