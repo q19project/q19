@@ -23,13 +23,13 @@ export default class timuDoor extends wepy.page {
         createUser().then(function(createResp) {
           console.log(createResp)
           wx.navigateTo({
-            url: '/pages/ceyanSubmit/guideDoor.wpy'
+            url: '/pages/ceyanSubmit/guideDoor'
           })
         })
       } else {
         if (fetchResp.data[0].status === 'new') {
           wx.navigateTo({
-            url: '/pages/ceyanSubmit/guideDoor.wpy'
+            url: '/pages/ceyanSubmit/guideDoor'
           })
         }
         // 已有用户记录，新手任务还未完成，继续完成新手任务

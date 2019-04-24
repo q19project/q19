@@ -1,0 +1,25 @@
+<style>
+</style>
+<template>
+  <view class="page">
+    新手闯关
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import { fetchUserInfo } from '../../model/userModel.js'
+
+export default class guideDoor extends wepy.page {
+  config = {
+    navigationBarTitleText: '新手闯关'
+  }
+
+  onLoad() {
+    let fetchPromise = fetchUserInfo()
+    fetchPromise.then(function(fetchResp) {
+      console.log(fetchResp)
+    })
+  }
+}
+</script>
