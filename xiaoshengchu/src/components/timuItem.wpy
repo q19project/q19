@@ -1,0 +1,17 @@
+<style>
+</style>
+<template>
+  <view>
+    {{timuData.content}} {{timuData.answer}}
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class timuItem extends wepy.component {
+  props = {
+    timuData: {
+      type: null
+    }
+  }
+}
+</script>

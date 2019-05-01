@@ -1,0 +1,41 @@
+<style>
+.timulist {
+  display: flex;
+  flex-direction: column;
+}
+.timuitem {
+  display: flex;
+  flex-direction: row;
+  margin-top: 4rpx;
+  align-items: center;
+  font-size: 24rpx;
+}
+</style>
+<template>
+  <view class="timulist">
+    <repeat for="{{listData}}">
+      <view class="timuitem">
+      <checkbox class="timulist checkbox"></checkbox>
+      <comtimuitem :timuData.sync="item"></comtimuitem>
+      </view>
+    </repeat>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import timuItem from './timuItem'
+
+export default class timuList extends wepy.component {
+  onLoad() {
+    console.log(this.listData)
+  }
+  components = {
+    comtimuitem: timuItem
+  }
+  props = {
+    listData: {
+      type: null
+    }
+  }
+}
+</script>

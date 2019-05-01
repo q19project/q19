@@ -1,22 +1,35 @@
+<style>
+.timu-wrapper {
+  height: 500rpx;
+}
+.timu {
+  margin: 10rpx;
+}
+</style>
+
 <template>
   <view class="page">
     <view class="page__bd">
       <view class="weui-panel weui-panel_access">
-        <view class="weui-panel__bd">
-          <view class="weui-cell weui-cell_input">
-            <view class="weui-cell__hd">
-              <view class="weui-label">名称：</view>
-            </view>
-            <view class="weui-cell__bd">
-              <input class="weui-input" @input="setName" placeholder="请输入名称" />
-            </view>
+        <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd">
+            <view class="weui-label">名称：</view>
           </view>
+          <view class="weui-cell__bd">
+            <input class="weui-input" @input="setName" placeholder="请输入名称" />
+          </view>
+        </view>
+
+        <scroll-view scroll-y="true" class="timu-wrapper">
+          <comtimulist class="timu" :listData.sync="timuList"></comtimulist>
+        </scroll-view>
+        <view class="weui-panel__bd">
           <view class="weui-cell weui-cell_input">
             <view class="weui-cell__hd">
               <view class="weui-label">题目：</view>
             </view>
             <view class="weui-cell__bd">
-              <checkbox-group @change="checkTimu">
+              <!-- <checkbox-group @change="checkTimu">
                 <view wx:for="{{timuList}}" wx:key="_id">
                   <label class="weui-cell weui-check__label">
                     <view>
@@ -30,7 +43,7 @@
                     <label>每题分值：</label><input data-id="{{item._id}}" @input="setTimuScore" />
                   </view>
                 </view>
-              </checkbox-group>
+              </checkbox-group> -->
             </view>
           </view>
         </view>
@@ -45,6 +58,7 @@
 import wepy from 'wepy'
 import timuModel from '../../model/timuModel.js'
 import timuWxs from '../../model/timu.wxs'
+import comTimulist from '../../components/timuList'
 
 export default class ceyanMaker extends wepy.page {
   config = {
@@ -52,6 +66,9 @@ export default class ceyanMaker extends wepy.page {
   }
   wxs = {
     m1: timuWxs
+  }
+  components = {
+    comtimulist: comTimulist
   }
   data = {
     timuList: [],
@@ -65,9 +82,9 @@ export default class ceyanMaker extends wepy.page {
     // let _self = this
     timuModel
       .loadTimu()
-      .where({
-        transform: true
-      })
+      // .where({
+      //   transform: true
+      // })
       .get()
       .then(res => {
         this.timuList = res.data
@@ -130,6 +147,7 @@ export default class ceyanMaker extends wepy.page {
   }
   onLoad(options) {
     console.log('onload', options)
+    console.log(this.timuList)
     if (options.id) {
       // 加载指定测验卷数据
       // this.setData({
