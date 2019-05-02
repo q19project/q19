@@ -1,25 +1,247 @@
-<style>
+<style lang="less">
+.page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.question {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #f0fff0;
+  margin: 10rpx 0;
+  .question_header {
+    display: flex;
+    flex: 1 1 20rpx;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .question_body {
+    display: flex;
+    flex: 10 1 auto;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+}
+.answer {
+  flex: 1;
+  background: #f0f0ff;
+  .answer_operation {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    .prev_timu {
+      flex: 1 1 60rpx;
+    }
+    .next_timu {
+      flex: 1 1 60rpx;
+    }
+    .prev_timu,
+    .next_timu {
+      button {
+        width: 120rpx;
+        height: 120rpx;
+        border-radius: 60rpx;
+        border: 1rpx solid #c3c3c3;
+        font-size: 20rpx;
+        line-height: 120rpx;
+      }
+    }
+    .answer_input_wrapper {
+      flex: 10 1 auto;
+      padding: 20rpx 120rpx;
+    }
+    .answer_input {
+      border-bottom: 1rpx solid #333;
+      text-align: center;
+      padding: 5rpx;
+    }
+  }
+}
+
+.btn_center {
+  text-align: center;
+}
 </style>
+
 <template>
   <view class="page">
-    新手闯关
+    <view class="question">
+      <view class="question_header">
+        <text>{{ceyanName}}</text>
+        <view class="weui-label">题目：{{ceyanCurrent+1}} / {{ceyanTotal}}</view>
+      </view>
+      <view class="question_body">
+        <view style="text-align:center;">
+          <text>{{timuContent[ceyanCurrent].content}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="answer">
+      <view class="weui-cell__hd">
+        <view class="weui-label">作答</view>
+      </view>
+      <view class="answer_operation">
+        <view class="prev_timu">
+          <button disabled="{{ceyanCurrent===0}}" class="weui-btn btn-mini" size="mini" @tap="prevTimu">上一题</button>
+        </view>
+        <view class="answer_input_wrapper">
+          <input class="answer_input" focus="{{answerFocus}}" type="digit" @input="saveAnswer" wx:key="{{ceyanCurrent}}" data-id="{{timuList[ceyanCurrent]}}" value="{{timuContent[ceyanCurrent].answer}}" placeholder="输入你的答案" />
+        </view>
+        <view class="next_timu">
+          <button disabled="{{(ceyanCurrent+1)===ceyanTotal}}" class="weui-btn btn-mini" size="mini" @tap="nextTimu">下一题</button>
+        </view>
+      </view>
+      <view class="btn_center" wx:if="{{(ceyanCurrent+1) === ceyanTotal}}">
+        <button size="mini" type="primary" @tap="submitCeyan">交卷</button>
+      </view>
+    </view>
   </view>
 </template>
-
 <script>
 import wepy from 'wepy'
+import ceyanModel from '../../model/ceyanModel'
+import timuModel from '../../model/timuModel'
 import { fetchUserInfo } from '../../model/userModel.js'
 
-export default class guideDoor extends wepy.page {
+import { recordStart, recordEnd, recordGetAll } from '../../model/timerRecord'
+
+export default class ceyanSubmit extends wepy.page {
   config = {
     navigationBarTitleText: '新手闯关'
   }
-
-  onLoad() {
+  data = {
+    ceyanCurrent: 0,
+    ceyanTotal: 0,
+    ceyanName: '',
+    ceyanId: 0,
+    answerFocus: true,
+    timuList: [],
+    timuContent: [],
+    loadingTimuFlag: false, // 状态位
+    timuTime: [] // 记录每题的做题时间
+  }
+  methods = {
+    prevTimu: function() {
+      let current = this.ceyanCurrent
+      // 记录结束时间
+      recordEnd({ name: 'ceyan_' + current })
+      if (current > 0) {
+        this.loadTimuIndex(current - 1)
+      }
+    },
+    nextTimu: function() {
+      let current = this.ceyanCurrent
+      recordEnd({ name: 'ceyan_' + current })
+      if (current < this.timuList.length - 1) {
+        this.loadTimuIndex(current + 1)
+      }
+    },
+    saveAnswer(evt) {
+      if (this.loadingTimuFlag) return
+      // console.log(this.ceyanCurrent, this.timuContent[this.ceyanCurrent], evt.currentTarget)
+      let answer = evt.detail.value
+      console.log(evt.detail.value, evt.detail.cursor, evt.detail.keyCode)
+      this.timuContent[this.ceyanCurrent].answer = answer
+    },
+    submitCeyan(evt) {
+      recordEnd({
+        name: 'ceyan_' + this.ceyanCurrent
+      })
+      wx.showLoading({
+        title: '结算中'
+      })
+      wx.cloud.callFunction({
+        name: 'submitceyan',
+        data: {
+          ceyanId: this.ceyanId,
+          answerList: this.timuContent,
+          static: recordGetAll()
+        },
+        success(res) {
+          // console.log(res)
+          wx.hideLoading()
+          wx.navigateTo({
+            url:
+              '/pages/ceyanResult/ceyanResult?resultId=' +
+              res.result.resultId._id
+          })
+        },
+        failed(res) {
+          console.log(res)
+        }
+      })
+      // console.log(this.ceyanId, this.timuContent)
+    }
+  }
+  // 加载测验卷题目
+  async loadCeyan(ceyanId) {
+    ceyanId = ceyanId || '96c1cbbe5cca78f90a791e9e4fc5d46c'
+    let ceyanData = await ceyanModel.fetchDetail(ceyanId)
+    // console.log(ceyanData)
+    this.ceyanName = ceyanData.name
+    this.ceyanId = ceyanData._id
+    let timuList = ceyanModel.flatTimu(ceyanData)
+    this.timuList = timuList
+    this.ceyanTotal = timuList.length
+    // 根据题目id加载题目内容
+    // 将数据扁平化，过程中生成具体题目
+    this.loadTimuIndex(0)
+  }
+  // 加载指定位置的题目
+  async loadTimuIndex(index) {
+    this.loadingTimuFlag = true
+    // 获取题目
+    let _self = this
+    let timuId = this.timuList[index]
+    // 获取题目id
+    let timuData = await timuModel.fetchDetail(timuId, index)
+    // 打点记录答题时间
+    recordStart({ name: 'ceyan_' + index })
+    // let prevTime = this.timuTime[index] || 0
+    // let nowTime = new Date().getTime()
+    // let answer = ''
+    if (typeof this.timuContent[index] !== 'undefined') {
+      // answer = timuContent[index].answer
+    } else {
+      this.timuContent[index] = {
+        timuId: timuId,
+        content: timuData.content,
+        answer: ''
+      }
+    }
+    this.ceyanCurrent = index
+    // console.log(index, this.timuContent[index])
+    setTimeout(function() {
+      _self.loadingTimuFlag = false
+      _self.$apply()
+    }, 100)
+  }
+  onLoad(options) {
+    let ceyanId = options.ceyanId
+    this.loadCeyan(ceyanId)
     let fetchPromise = fetchUserInfo()
     fetchPromise.then(function(fetchResp) {
       console.log(fetchResp)
+      // wx.switchTab({
+      //   url: '/pages/ceyanSubmit/timuDoor'
+      // })
     })
+  }
+  onShow() {
+    console.log('页面切前台')
+  }
+
+  onHide() {
+    console.log('页面切后台')
+  }
+
+  onShareAppMessage(object) {
+    return {
+      title: '小升初题库',
+      url: '/pages/ceyanSubmit/ceyanSubmit?ceyanId=' + this.ceyanId
+    }
   }
 }
 </script>

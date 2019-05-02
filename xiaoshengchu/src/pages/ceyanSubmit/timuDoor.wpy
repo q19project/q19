@@ -22,13 +22,13 @@ export default class timuDoor extends wepy.page {
         // 没有任何用户信息，建立用户信息跳转至新手引导页面
         createUser().then(function(createResp) {
           console.log(createResp)
-          wx.navigateTo({
+          wx.redirectTo({
             url: '/pages/ceyanSubmit/guideDoor'
           })
         })
       } else {
         if (fetchResp.data[0].status === 'new') {
-          wx.navigateTo({
+          wx.redirectTo({
             url: '/pages/ceyanSubmit/guideDoor'
           })
         }
