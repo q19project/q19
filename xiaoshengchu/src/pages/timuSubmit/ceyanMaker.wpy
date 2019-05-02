@@ -5,47 +5,31 @@
 .timu {
   margin: 10rpx;
 }
+.field-area {
+  display: flex;
+  align-items: center;
+}
+.under-input {
+  border-bottom: 1px solid #333;
+  padding: 4rpx;
+}
 </style>
 
 <template>
   <view class="page">
     <view class="page__bd">
       <view class="weui-panel weui-panel_access">
-        <view class="weui-cell weui-cell_input">
-          <view class="weui-cell__hd">
-            <view class="weui-label">名称：</view>
-          </view>
-          <view class="weui-cell__bd">
-            <input class="weui-input" @input="setName" placeholder="请输入名称" />
-          </view>
+        <view class="field-area">
+          <view class="">试卷名称：</view>
+          <input class="under-input" @input="setName" placeholder="请输入名称" />
         </view>
-
-        <scroll-view scroll-y="true" class="timu-wrapper">
-          <comtimulist class="timu" :listData.sync="timuList"></comtimulist>
+        <label>题库列表：</label>
+        <scroll-view scroll-y="true" class="timu-wrapper" @scrolltolower="loadMoreTimu">
+          <comtimulist @chooseTimu.user="showTimu" class="timu" :listData.sync="timuList"></comtimulist>
         </scroll-view>
         <view class="weui-panel__bd">
-          <view class="weui-cell weui-cell_input">
-            <view class="weui-cell__hd">
-              <view class="weui-label">题目：</view>
-            </view>
-            <view class="weui-cell__bd">
-              <!-- <checkbox-group @change="checkTimu">
-                <view wx:for="{{timuList}}" wx:key="_id">
-                  <label class="weui-cell weui-check__label">
-                    <view>
-                      <checkbox class="wui-check" value="{{item._id}}">{{item.content}}</checkbox>
-                    </view>
-                  </label>
-                  <view wx:if="{{m1.inArr(item._id,chooseTimu)}}">
-                    <label>数量：</label><input data-id="{{item._id}}" @input="setTimuNumber" />
-                  </view>
-                  <view wx:if="{{m1.inArr(item._id,chooseTimu)}}">
-                    <label>每题分值：</label><input data-id="{{item._id}}" @input="setTimuScore" />
-                  </view>
-                </view>
-              </checkbox-group> -->
-            </view>
-          </view>
+          <view class="weui-label">题目：</view>
+          <comceyanjuan :listData.sync="ceyanjuanData"></comceyanjuan>
         </view>
       </view>
     </view>
@@ -59,6 +43,7 @@ import wepy from 'wepy'
 import timuModel from '../../model/timuModel.js'
 import timuWxs from '../../model/timu.wxs'
 import comTimulist from '../../components/timuList'
+import comCeyanjuan from '../../components/ceyanJuan'
 
 export default class ceyanMaker extends wepy.page {
   config = {
@@ -68,31 +53,51 @@ export default class ceyanMaker extends wepy.page {
     m1: timuWxs
   }
   components = {
-    comtimulist: comTimulist
+    comtimulist: comTimulist,
+    comceyanjuan: comCeyanjuan
   }
   data = {
     timuList: [],
+    currentMask: 0,
     name: '',
     number: {},
     score: {},
     chooseTimu: [],
+    ceyanjuanData: [],
     ceyanId: ''
   }
   loadTimu() {
-    // let _self = this
     timuModel
       .loadTimu()
+      .orderBy('submittime', 'desc')
+      .skip(this.currentMask)
+      .limit(10)
       // .where({
       //   transform: true
       // })
       .get()
       .then(res => {
-        this.timuList = res.data
+        this.timuList = this.timuList.concat(res.data)
+        this.currentMask += res.data.length
         this.$apply()
       })
   }
 
   methods = {
+    loadMoreTimu() {
+      console.log('loadmoretimu')
+      this.loadTimu()
+    },
+    showTimu(timuList) {
+      // console.log(timuList)
+      this.chooseTimu = timuList
+      timuModel.fetchTimuList(this.chooseTimu).then(res => {
+        console.log(res)
+        // 自动排序
+        this.ceyanjuanData = res
+        this.$apply()
+      })
+    },
     setTimuNumber(evt) {
       let id = evt.currentTarget.dataset.id
       this.number[id] = evt.detail.value
@@ -103,14 +108,6 @@ export default class ceyanMaker extends wepy.page {
     },
     setName(evt) {
       this.name = evt.detail.value
-    },
-    checkTimu(evt) {
-      console.log(evt)
-      const ids = evt.detail.value
-      // console.log(id);
-      this.chooseTimu = ids
-      // console.log(this.chooseTimu.indexOf('XKIp6pT75u2277bm') > -1)
-      this.$apply()
     },
     makeCeyan() {
       console.log(this.chooseTimu)
@@ -127,6 +124,16 @@ export default class ceyanMaker extends wepy.page {
         total: 100
       }
 
+      // 矫正数据
+      for (let i = 0; i < this.chooseTimu.length; i++) {
+        const element = this.chooseTimu[i]
+        if (!ceyanData.number.hasOwnProperty(element)) {
+          ceyanData.number[element] = 1
+        }
+        if (!ceyanData.score.hasOwnProperty(element)) {
+          ceyanData.score[element] = 100 / this.chooseTimu.length
+        }
+      }
       // TODO: 校验完备
       if (!this.name) {
         return void wx.showToast({

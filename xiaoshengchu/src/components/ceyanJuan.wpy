@@ -1,0 +1,29 @@
+<style>
+</style>
+<template>
+  <view class="timulist">
+    <repeat for="{{listData}}">
+      <view class="timuitem">
+        <comtimuitem :timuData.sync="item"></comtimuitem>
+      </view>
+    </repeat>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import timuItem from './timuItem'
+
+export default class ceyanJuan extends wepy.component {
+  onLoad() {
+    console.log(this.listData)
+  }
+  components = {
+    comtimuitem: timuItem
+  }
+  props = {
+    listData: {
+      type: Array
+    }
+  }
+}
+</script>
