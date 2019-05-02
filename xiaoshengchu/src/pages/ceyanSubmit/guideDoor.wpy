@@ -146,6 +146,21 @@ export default class ceyanSubmit extends wepy.page {
       this.timuContent[this.ceyanCurrent].answer = answer
     },
     submitCeyan(evt) {
+      // 校验是否有未填写答案的情况
+      let emptyFlag = false
+      for (let index = 0; index < this.timuContent.length; index++) {
+        const element = this.timuContent[index]
+        if (element.answer === '') {
+          emptyFlag = true
+        }
+      }
+      if (emptyFlag) {
+        wx.showToast({
+          icon: 'none',
+          title: '请完成答题再提交答卷。'
+        })
+        return void 0
+      }
       recordEnd({
         name: 'ceyan_' + this.ceyanCurrent
       })
