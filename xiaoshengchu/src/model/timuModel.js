@@ -47,6 +47,17 @@ const fetchRemoteDetail = async (timuId) => {
   }
 }
 
+const fetchTimuList = async (timuIds) => {
+  let coll = loadTimu();
+  let ret = []
+  for (let i = 0; i < timuIds.length; i++) {
+    let timu = await fetchDetail(timuIds[i])
+    // console.log(timu);
+    ret.push(timu)
+  }
+  return ret
+}
+
 const fetchDetail = async (timuId, index = 0) => {
   let cacheKey = timuId + '_' + index
   // console.log(cache[cacheKey])
@@ -56,7 +67,7 @@ const fetchDetail = async (timuId, index = 0) => {
     let _timuData = JSON.parse(JSON.stringify(timuData))
     // console.log(timuData)
     // let _timuData = timuData
-    console.log(_timuData.content)
+    // console.log(_timuData.content)
     let realContent = transformContent(_timuData.content, _timuData.transform_rules)
     // console.log(realContent)
     _timuData.content = realContent
@@ -70,3 +81,4 @@ const fetchDetail = async (timuId, index = 0) => {
 exports.loadTimu = loadTimu;
 exports.loadCeyan = loadCeyan;
 exports.fetchDetail = fetchDetail;
+exports.fetchTimuList = fetchTimuList;
