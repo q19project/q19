@@ -13,12 +13,14 @@
 </style>
 <template>
   <view class="timulist">
-    <repeat for="{{listData}}">
-      <view class="timuitem">
-      <checkbox class="timulist checkbox"></checkbox>
-      <comtimuitem :timuData.sync="item"></comtimuitem>
-      </view>
-    </repeat>
+    <checkbox-group @change="chooseTimu">
+      <repeat for="{{listData}}">
+        <view class="timuitem">
+          <checkbox value="{{item._id}}" class="timulist checkbox"></checkbox>
+          <comtimuitem :timuData.sync="item"></comtimuitem>
+        </view>
+      </repeat>
+    </checkbox-group>
   </view>
 </template>
 <script>
@@ -31,6 +33,12 @@ export default class timuList extends wepy.component {
   }
   components = {
     comtimuitem: timuItem
+  }
+  methods = {
+    chooseTimu(evt) {
+      console.log(evt.detail.value)
+      this.$emit('chooseTimu', evt.detail.value)
+    }
   }
   props = {
     listData: {
