@@ -10,6 +10,16 @@
   min-height: 2.58823529em;
   line-height: 2.58823529em;
 }
+.cv100 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+.cv100btn {
+  width: 180rpx;
+  opacity: 0.6;
+}
 </style>
 <template>
   <view class="page">
@@ -45,7 +55,20 @@
             <view class="weui-cell__bd">
               <textarea class="weui-textarea" value="{{content}}" @input="setContent" placeholder="1+1=" />
               <view class="weui-textarea-counter">{{textInputNow}}/{{textInputMax}}</view>
+              <view wx:if="{{photoFlag!==true}}">
+                <button size="mini" @tap="startPhoto">拍照录题</button>
+              </view>
+              <view wx:if="{{photoFlag===true}}">
+                <button size="mini" @tap="endPhoto">关闭拍照</button>
+              </view>
             </view>
+          </view>
+          <view wx:if="{{photoFlag===true}}">
+            <camera device-position="back" flash="off" binderror="error" style="width: 100%; height: 300px;">
+              <cover-view class="cv100">
+                <button class="cv100btn" @tap="takePhoto" size="mini">选定并转换</button>
+              </cover-view>
+            </camera>
           </view>
           <view wx:if="{{transform===true}}">
             <view class="weui-cell weui-cell_input">
@@ -167,7 +190,8 @@ export default class timuSubmit extends wepy.page {
         field: 'yingyong',
         value: '应用题'
       }
-    ]
+    ],
+    photoFlag: false
   }
   methods = {
     setContent(evt) {
@@ -212,6 +236,52 @@ export default class timuSubmit extends wepy.page {
           this.panduanItems[i].checked = false
         }
       }
+    },
+    startPhoto(evt) {
+      this.photoFlag = true
+    },
+    endPhoto(evt) {
+      this.photoFlag = false
+    },
+    takePhoto(evt) {
+      console.log('takePhoto:', evt)
+      let _self = this
+      let photoContext = wx.createCameraContext()
+      photoContext.takePhoto({
+        quality: 'high',
+        success: photoObj => {
+          // console.log(imgPath)
+          wx.cloud.uploadFile({
+            cloudPath: '20190503.png', // 上传至云端的路径
+            filePath: photoObj.tempImagePath,
+            success: res => {
+              // 返回文件 ID
+              console.log(res.fileID)
+              wx.cloud.callFunction({
+                name: 'image2str',
+                data: {
+                  cloudId: res.fileID
+                },
+                success: resp => {
+                  console.log(resp.result.txt)
+                  if (resp.result.txt) {
+                    _self.content = resp.result.txt
+                    _self.photoFlag = false
+                    _self.$apply()
+                  }
+                }
+              })
+            },
+            fail: console.error
+          })
+        },
+        fail: () => {
+          console.log('fail')
+        },
+        complete: () => {
+          console.log('complete')
+        }
+      })
     },
     chooseType(evt) {
       let ty = evt.detail.value
