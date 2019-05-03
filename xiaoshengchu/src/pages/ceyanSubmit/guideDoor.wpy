@@ -22,6 +22,11 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 0 20rpx;
+    .timu-content {
+      font-size: 28rpx;
+      text-align: left;
+    }
   }
 }
 .answer {
@@ -73,8 +78,8 @@
         <view class="weui-label">题目：{{ceyanCurrent+1}} / {{ceyanTotal}}</view>
       </view>
       <view class="question_body">
-        <view style="text-align:center;">
-          <text>{{timuContent[ceyanCurrent].content}}</text>
+        <view>
+          <text class="timu-content">{{timuContent[ceyanCurrent].content}}</text>
         </view>
       </view>
     </view>
