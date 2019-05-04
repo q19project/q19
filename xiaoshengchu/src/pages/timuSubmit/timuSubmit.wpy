@@ -53,7 +53,7 @@
               <view class="weui-label">题目：</view>
             </view>
             <view class="weui-cell__bd">
-              <textarea class="weui-textarea" value="{{content}}" @input="setContent" placeholder="1+1=" />
+              <textarea class="weui-textarea" value="{{content}}" maxlength="1000" @input="setContent" placeholder="1+1=" />
               <view class="weui-textarea-counter">{{textInputNow}}/{{textInputMax}}</view>
               <view wx:if="{{photoFlag!==true}}">
                 <button size="mini" @tap="startPhoto">拍照录题</button>
